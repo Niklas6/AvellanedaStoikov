@@ -49,8 +49,7 @@ Implemented agents:
 
 - `ConstantSpreadAgent`: fixed bid and ask deltas
 - `SymmetricAgent`: Avellaneda-Stoikov spread without inventory skew
-- `ASModelAgent`, shown as `AS Inventory` in reports: inventory-aware
-  Avellaneda-Stoikov style quoting
+- `ASModelAgent`: inventory-aware Avellaneda-Stoikov style quoting to reduce risk
 
 The current AS-style quote uses:
 
