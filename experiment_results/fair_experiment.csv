@@ -1,0 +1,4 @@
+agent,mean,std,min,max
+constant,60.14,12.48,26.07,85.08
+symmetric,65.03,12.57,32.08,90.28
+AS Inventory,63.55,6.97,43.55,79.87

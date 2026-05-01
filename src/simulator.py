@@ -40,7 +40,7 @@ def simulation(SP: SimParams,St,Buy_a,Buy_b, agent: TradingAgent):
 
         db, da = agent.quote(state)
 
-        asks_filled = stochastic_processes.get_ask( stochastic_processes.lambda_intensity(SP.A,SP.k,da), Buy_a[i],inventory+10)
+        asks_filled = stochastic_processes.get_ask( stochastic_processes.lambda_intensity(SP.A,SP.k,da), Buy_a[i],inventory+10 )
         bids_filled = stochastic_processes.get_bid( stochastic_processes.lambda_intensity(SP.A,SP.k,db), Buy_b[i],money/St[i])
 
 

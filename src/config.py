@@ -28,3 +28,5 @@ class SimParams:
 
     A: float = 140
     k: float = 1.5
+
+    market_condition: str = 'fair'
