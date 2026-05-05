@@ -21,19 +21,25 @@ less aggressively on the bid side, reducing inventory exposure.
 
 
 ## Quick Start
-To run the experiment in python open the terminal, fist install the requirements by 
+To run the experiment, open a terminal and first install the requirements:
+
 ```text
 pip install -r requirements.txt
 ```
-Then the experiment can be run by the command 
+
+Then run the main Monte Carlo experiment:
+
 ```text
 python run_experiment.py --nsims 1000
 ```
-which creates the file simulation_results. By the command 
+
+This creates the result files. For a reproducible run, pass a random seed:
+
 ```text
 python run_experiment.py --seed 42 --nsims 1000
 ```
-one can simulate the simulation done in simulation_results_example.pdf
+
+This reproduces the example run shown in `simulation_results_example.pdf`.
 
 
 
@@ -48,11 +54,13 @@ one can simulate the simulation done in simulation_results_example.pdf
 |   +-- simulator.py             # Main simulation loop
 |   +-- stochastic_processes.py  # Price and order-arrival processes
 +-- run_experiment.py            # Runs Monte Carlo experiment and creates report
-+-- experiment_results/          # Generated CSV and plot outputs
-+-- report.pdf                   # Generated PDF report
-+-- 02_Simulation.ipynb          # Main exploratory simulation notebook
-+-- Playground_Avellaneda...ipynb# Early exploratory notebook
-+-- main.py                      # Placeholder script
++-- data_simulation_results/     # Generated CSV and plot outputs
+|   +-- fair_experiment.csv      # Monte Carlo summary table
+|   +-- fair_examplepath.png     # Example simulation path plot
++-- simulation_results.pdf       # Generated PDF report
++-- simulation_results_example.pdf # Example report generated with a fixed seed
++-- Archiv/                      # Archived exploratory notebooks
++-- requirements.txt             # Python dependencies
 ```
 
 ## Trading Agents
