@@ -1,4 +1,4 @@
 agent,mean_profit,std_profit,sharpe_profit,mean_liquidity,std_liquidity
-constant,60.88,12.85,4.74,1027.11,83.35
-symmetric,65.79,12.86,5.12,1023.11,89.96
-AS Inventory,63.48,7.06,8.99,1032.21,32.9
+constant,60.58,12.57,4.82,1049.52,83.09
+symmetric,65.36,12.5,5.23,1051.91,85.37
+AS Inventory,62.89,7.52,8.36,1033.9,33.36

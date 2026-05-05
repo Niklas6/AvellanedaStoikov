@@ -218,8 +218,8 @@ def main():
     plt.savefig("experiment_results/fair_examplepath.png", dpi=300)
 
 
-    with PdfPages("report.pdf") as pdf:
-        pdf.savefig(make_dataframe_table_page(parse.nsims,df_fair_experiment, title="Agent Performance in Fair Market"), bbox_inches="tight")
+    with PdfPages("simulation_results.pdf") as pdf:
+        pdf.savefig(make_dataframe_table_page(parse.nsims,df_fair_experiment, title="Agent Performance"), bbox_inches="tight")
         pdf.savefig(fig, bbox_inches="tight")
         #pdf.savefig(make_dataframe_table_page(df_insider_experiment, title="Agent Performance in Market with Insider Trader"), bbox_inches="tight")
         #pdf.savefig(fig2, bbox_inches="tight")
