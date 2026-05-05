@@ -74,7 +74,7 @@ skew = inventory * gamma * sigma**2 * (T - t) / T
 
 bid_delta = spread / 2 + skew
 ask_delta = spread / 2 - skew
-``
+```
 
 ## Model Components
 
