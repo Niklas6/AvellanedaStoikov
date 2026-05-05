@@ -46,7 +46,7 @@ def run_experiments(N,agents,SP):
     dg=df.groupby('agent', sort=False).agg(
         mean_profit = ('profit',"mean"),
         std_profit =  ('profit',"std"),
-        sharpe_profit = ('profit',lambda x: x.mean() / x.std()),
+        sharpe_ratio = ('profit',lambda x: x.mean() / x.std()),
         mean_liquidity = ('average_liquidity',"mean"),
         std_liquidity = ('deviation_liquidity',"std")
     )
@@ -62,7 +62,7 @@ def create_figure(params: SimParams,agents):
     ask_orders = Processes['asks']
     bid_orders = Processes['bids']
     #i=0
-    fig, axis = plt.subplots(1, 4, figsize=(12, 2.5))
+    fig, axis = plt.subplots(1, 4, figsize=(14, 2.5))
     axis[0].plot(prices, color="black")
     axis[0].set_title("Stock Price")
     #axis[0].set_ylabel("Stock Price")
@@ -101,7 +101,7 @@ def make_dataframe_table_page(nsim,df, title="", max_rows=15):
     preview_df = df.head(max_rows).reset_index()
     preview_df.columns = [col.replace("_", " ").title() for col in preview_df.columns]
 
-    fig, ax = plt.subplots(figsize=(10, 4.5))
+    fig, ax = plt.subplots(figsize=(12, 4.5))
     fig.patch.set_facecolor("#f7f8fa")
     ax.set_facecolor("#f7f8fa")
     ax.axis("off")
@@ -217,7 +217,7 @@ def main():
         
     plt.savefig("data_simulation_results/fair_examplepath.png", dpi=300)
 
-
+    #simulation_results_example
     with PdfPages("simulation_results.pdf") as pdf:
         pdf.savefig(make_dataframe_table_page(parse.nsims,df_fair_experiment, title="Agent Performance"), bbox_inches="tight")
         pdf.savefig(fig, bbox_inches="tight")
