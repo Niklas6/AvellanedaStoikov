@@ -31,7 +31,7 @@ python run_experiment.py --nsims 1000
 ```
 which creates the file simulation_results. By the command 
 ```text
-python run_experiment.py --nsims 1000
+python run_experiment.py --seed 42 --nsims 1000
 ```
 one can simulate the simulation done in simulation_results_example.pdf
 
