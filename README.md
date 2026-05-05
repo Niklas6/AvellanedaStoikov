@@ -84,7 +84,6 @@ data_simulation_results/fair_examplepath.png
 |   +-- fair_examplepath.png     # Example simulation path plot
 +-- simulation_results.pdf       # Generated PDF report
 +-- simulation_results_example.pdf # Example report generated with a fixed seed
-+-- Archiv/                      # Archived exploratory notebooks
 +-- requirements.txt             # Python dependencies
 ```
 
