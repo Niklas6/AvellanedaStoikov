@@ -1,25 +1,11 @@
 # Avellaneda-Stoikov Market Making Simulator
 
-Educational Python implementation of a market-making simulator inspired by the
+Python implementation of a market-making simulator inspired by the
 Avellaneda-Stoikov framework for optimal bid and ask quoting under inventory
 risk.
 
 The project compares simple benchmark agents against an inventory-aware
 Avellaneda-Stoikov style agent in a simulated limit order book environment.
-
-## Project Status
-
-This project is in an early but runnable stage. The core simulator, stochastic
-price process, and trading agents are separated into Python modules under
-`src/`, with exploratory analysis in Jupyter notebooks.
-
-Current focus:
-
-- simulate a mid-price process using Brownian motion
-- model order arrivals with distance-dependent fill intensity
-- compare constant, symmetric, and inventory-aware quoting agents
-- track cash, inventory, total portfolio value, and exponential utility
-- generate a reproducible experiment report as CSV, PNG, and PDF output
 
 ## Motivation
 
@@ -63,8 +49,7 @@ Implemented agents:
 
 - `ConstantSpreadAgent`: fixed bid and ask deltas
 - `SymmetricAgent`: Avellaneda-Stoikov spread without inventory skew
-- `ASModelAgent`, shown as `AS Inventory` in reports: inventory-aware
-  Avellaneda-Stoikov style quoting
+- `ASModelAgent`: inventory-aware Avellaneda-Stoikov style quoting to reduce risk
 
 The current AS-style quote uses:
 
