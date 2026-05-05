@@ -22,17 +22,17 @@ less aggressively on the bid side, reducing inventory exposure.
 
 ## Quick Start
 To run the experiment in python open the terminal, fist install the requirements by 
-
+```text
 pip install -r requirements.txt
-
+```
 Then the experiment can be run by the command 
-
+```text
 python run_experiment.py --nsims 1000
-
+```
 which creates the file simulation_results. By the command 
-
+```text
 python run_experiment.py --nsims 1000
-
+```
 one can simulate the simulation done in simulation_results_example.pdf
 
 
