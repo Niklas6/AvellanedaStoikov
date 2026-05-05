@@ -128,32 +128,8 @@ every sample path.
 
 ## Current Limitations
 
-- The project is still research/prototype code rather than a packaged library.
-- There are no automated tests yet.
-- The execution model is simplified and does not use real order book data.
-- Transaction costs, latency, queue position, and adverse selection are not yet
-  modeled.
-- The experiment runner currently has hard-coded parameters rather than command
-  line options.
-- The generated report is useful but still minimal.
-- `main.py` is still a placeholder and should be replaced or removed before
-  publishing.
+-
 
-## Roadmap
-
-Planned technical improvements:
-
-- add `requirements.txt` or `pyproject.toml`
-- add `.gitignore` for `.venv/`, `.idea/`, caches, and notebook checkpoints
-- add tests for agents, quote behavior, and simulator output shapes
-- add command-line options to `run_experiment.py`, for example `--n-sims`,
-  `--seed`, `--market-condition`, and `--output`
-- add summary metrics: mean PnL, PnL standard deviation, utility, inventory risk
-- clean naming and docstrings across the codebase
-- add plots and result tables to the README
-- extend the PDF report with inventory-risk plots and parameter sweeps
-- compare results against the qualitative findings from the Avellaneda-Stoikov
-  paper
 
 ## Reference
 
