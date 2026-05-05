@@ -6,43 +6,68 @@ risk.
 
 The project compares simple benchmark agents against an inventory-aware
 Avellaneda-Stoikov style agent in a simulated limit order book environment.
+It is designed as a compact quantitative finance project with reproducible
+experiments, generated result tables, plots, and a PDF report.
 
-## Motivation
+## Overview
 
 Market makers quote both bid and ask prices. They earn the spread when orders
 are filled, but they also accumulate inventory risk when buy and sell fills are
 unbalanced.
 
 The Avellaneda-Stoikov model adjusts quotes dynamically based on inventory,
-volatility, time remaining, and risk aversion. The key idea is that a market
-maker with positive inventory should quote more aggressively on the ask side and
-less aggressively on the bid side, reducing inventory exposure.
+volatility, time remaining, and risk aversion. The main idea is that a market
+maker with positive inventory should quote more aggressively on the ask side
+and less aggressively on the bid side, encouraging trades that reduce inventory
+exposure.
 
+This project simulates that idea by comparing three trading agents:
 
+- `ConstantSpreadAgent`: quotes a fixed bid and ask spread.
+- `SymmetricAgent`: uses the Avellaneda-Stoikov spread without inventory skew.
+- `ASModelAgent`: adds an inventory-aware skew to manage position risk.
+
+## Features
+
+- Stochastic mid-price simulation using a Brownian motion model.
+- Exponential order-arrival intensity based on quote distance from the mid-price.
+- Shared agent interface for comparing different quoting strategies.
+- Monte Carlo experiment runner with configurable number of simulations.
+- Reproducible experiments through random seeds.
+- Generated CSV summary tables.
+- Generated example-path plot showing price, inventory, liquidity, and revenue.
+- Automated PDF report generation with experiment results and plots.
 
 ## Quick Start
-To run the experiment, open a terminal and first install the requirements:
 
-```text
+Install the project dependencies:
+
+```powershell
 pip install -r requirements.txt
 ```
 
-Then run the main Monte Carlo experiment:
+Run the main Monte Carlo experiment:
 
-```text
+```powershell
 python run_experiment.py --nsims 1000
 ```
 
-This creates the result files. For a reproducible run, pass a random seed:
+For a reproducible run, pass a random seed:
 
-```text
+```powershell
 python run_experiment.py --seed 42 --nsims 1000
 ```
 
-This reproduces the example run shown in `simulation_results_example.pdf`.
+The reproducible command above generates the same experiment setup used for
+`simulation_results_example.pdf`.
 
+The experiment creates:
 
-
+```text
+simulation_results.pdf
+data_simulation_results/fair_experiment.csv
+data_simulation_results/fair_examplepath.png
+```
 
 ## Repository Structure
 
@@ -63,33 +88,7 @@ This reproduces the example run shown in `simulation_results_example.pdf`.
 +-- requirements.txt             # Python dependencies
 ```
 
-## Trading Agents
-
-The simulator is designed around a common agent interface:
-
-```python
-class TradingAgent:
-    def quote(self, state: MarketState) -> tuple[float, float]:
-        """Return bid_delta, ask_delta."""
-```
-
-Implemented agents:
-
-- `ConstantSpreadAgent`: fixed bid and ask deltas
-- `SymmetricAgent`: Avellaneda-Stoikov spread without inventory skew
-- `ASModelAgent`: inventory-aware Avellaneda-Stoikov style quoting to reduce risk
-
-The current AS-style quote uses:
-
-```python
-spread = gamma * sigma**2 * (T - t) + 2 * log(1 + gamma / k) / gamma
-skew = inventory * gamma * sigma**2 * (T - t) / T
-
-bid_delta = spread / 2 + skew
-ask_delta = spread / 2 - skew
-```
-
-## Model Components
+## Methodology
 
 ### Mid-Price Process
 
@@ -99,11 +98,13 @@ For the fair market setting, the mid-price is simulated as a Brownian motion:
 S_t = S_0 + sigma * W_t
 ```
 
-This is currently implemented in `src/stochastic_processes.py`.
+where:
 
-The project also contains an experimental `insider` market condition. In this
-mode, event jumps are added to the price path and order-arrival samples are
-modified around jump events. This is still an early extension.
+- `S_0` is the initial mid-price.
+- `sigma` controls price volatility.
+- `W_t` is a Brownian motion term.
+
+This is implemented in `src/stochastic_processes.py`.
 
 ### Fill Intensity
 
@@ -116,13 +117,18 @@ lambda(delta) = A * exp(-k * delta)
 
 where:
 
-- `A` controls baseline order arrival intensity
-- `k` controls how quickly fill probability decreases with quote distance
-- `delta` is the bid or ask distance from the mid-price
+- `A` controls the baseline order-arrival intensity.
+- `k` controls how quickly fill probability decreases as quotes move away from
+  the mid-price.
+- `delta` is the bid or ask distance from the mid-price.
+
+This gives the simulator a simple but useful trade-off: quotes placed closer to
+the mid-price are more likely to fill, while wider quotes earn more spread when
+they do fill.
 
 ### Portfolio Value
 
-The simulator tracks:
+The simulator tracks cash, inventory, and total portfolio value:
 
 ```python
 portfolio_value = cash + inventory * mid_price
@@ -134,15 +140,108 @@ It also computes exponential utility:
 utility = -exp(-gamma * pnl)
 ```
 
-The current experiment table reports final PnL summary statistics by agent.
-Inventory-risk metrics are a planned next step because the AS-style strategy is
-primarily designed to manage inventory exposure, not simply maximize raw PnL in
-every sample path.
+where `gamma` is the risk-aversion parameter.
+
+### Avellaneda-Stoikov Quote Rule
+
+The current inventory-aware agent uses an Avellaneda-Stoikov style spread and
+inventory skew:
+
+```python
+spread = gamma * sigma**2 * (T - t) + 2 * log(1 + gamma / k) / gamma
+skew = inventory * gamma * sigma**2 * (T - t) / T
+
+bid_delta = spread / 2 + skew
+ask_delta = spread / 2 - skew
+```
+
+When inventory is positive, the agent moves its quotes to encourage selling and
+reduce inventory exposure. When inventory is negative, it does the opposite.
+
+## Trading Agents
+
+The simulator is designed around a common agent interface:
+
+```python
+class TradingAgent:
+    def quote(self, state: MarketState) -> tuple[float, float]:
+        """Return bid_delta, ask_delta."""
+```
+
+Each agent receives the current market state and returns bid and ask distances
+from the mid-price.
+
+### Constant Spread Agent
+
+The constant spread agent is a simple benchmark. It always returns the same bid
+and ask deltas, regardless of inventory, volatility, or time remaining.
+
+### Symmetric Agent
+
+The symmetric agent uses the Avellaneda-Stoikov spread formula but does not
+adjust for inventory. It is useful as an intermediate benchmark because it uses
+the model's spread logic without the inventory-management component.
+
+### AS Inventory Agent
+
+The AS inventory agent uses both the spread and inventory skew. This allows it
+to adapt its quotes when the trading strategy accumulates a large long or short
+position.
+
+## Example Results
+
+The experiment runner compares agents over repeated simulated market paths. The
+summary table reports:
+
+- Mean profit.
+- Profit standard deviation.
+- Sharpe-style profit ratio.
+- Mean liquidity.
+- Liquidity standard deviation.
+
+The generated plot shows one example path with:
+
+- Simulated stock price.
+- Agent inventory.
+- Cash/liquidity.
+- Revenue over time.
+
+If the result image is available, it can be viewed here:
+
+![Example simulation path](data_simulation_results/fair_examplepath.png)
+
+The full generated report is saved as:
+
+```text
+simulation_results.pdf
+```
 
 ## Current Limitations
 
--
+- The limit order book model is simplified and uses synthetic order arrivals.
+- The project does not currently use historical market data.
+- Transaction costs, latency, queue position, and adverse selection are not yet
+  modeled.
+- The experiment runner has only a small number of command-line options.
+- Automated tests are not yet included.
+- The experimental insider-market extension is not part of the main report.
 
+## Future Work
+
+Possible extensions include:
+
+- Add automated tests for the quote logic, simulator output shapes, and
+  accounting identities.
+- Add command-line options for output paths, market condition, volatility, risk
+  aversion, and order-arrival parameters.
+- Add inventory-risk metrics such as average absolute inventory, maximum
+  inventory, and terminal inventory distribution.
+- Add parameter sweeps for volatility, risk aversion, and fill-intensity
+  parameters.
+- Extend the PDF report with inventory-risk plots and strategy comparisons.
+- Compare the qualitative behavior of the simulation against the
+  Avellaneda-Stoikov paper.
+- Calibrate the model against real or historical limit order book data.
 
 ## Reference
 
