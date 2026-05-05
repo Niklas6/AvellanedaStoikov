@@ -196,7 +196,7 @@ def main():
 
 
 
-    df_fair_experiment.to_csv("experiment_results/fair_experiment.csv", index=True)
+    df_fair_experiment.to_csv("data_simulation_results/fair_experiment.csv", index=True)
 
     #params_insider=copy.copy(params)
     #params_insider.market_condition = 'insider'
@@ -215,7 +215,7 @@ def main():
         
         
         
-    plt.savefig("experiment_results/fair_examplepath.png", dpi=300)
+    plt.savefig("data_simulation_results/fair_examplepath.png", dpi=300)
 
 
     with PdfPages("simulation_results.pdf") as pdf:

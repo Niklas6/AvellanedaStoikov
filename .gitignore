@@ -19,6 +19,9 @@ env/
 *.swp
 *.swo
 
+# Accidental nested repository
+add/
+
 # Jupyter
 .ipynb_checkpoints/
 
