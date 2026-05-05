@@ -18,6 +18,21 @@ volatility, time remaining, and risk aversion. The key idea is that a market
 maker with positive inventory should quote more aggressively on the ask side and
 less aggressively on the bid side, reducing inventory exposure.
 
+
+
+## Quick Start
+To run the experiment in python open the terminal, fist install the requirements by 
+pip install -r requirements.txt
+Then the experiment can be run by the command 
+python run_experiment.py --nsims 1000
+which creates the file simulation_results. By the command 
+
+python run_experiment.py --nsims 1000
+one can simulate the simulation done in simulation_results_example.pdf
+
+
+
+
 ## Repository Structure
 
 ```text
@@ -59,79 +74,7 @@ skew = inventory * gamma * sigma**2 * (T - t) / T
 
 bid_delta = spread / 2 + skew
 ask_delta = spread / 2 - skew
-```
-
-## Quick Start
-
-Create and activate a virtual environment, then install the basic dependencies:
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\activate
-pip install numpy pandas matplotlib jupyter tabulate
-```
-
-Run the main experiment:
-
-```powershell
-python run_experiment.py
-```
-
-This creates:
-
-```text
-experiment_results/fair_experiment.csv
-experiment_results/fair_examplepath.png
-report.pdf
-```
-
-You can also run the notebook for exploratory analysis:
-
-```powershell
-jupyter notebook 02_Simulation.ipynb
-```
-
-Or run a small simulation directly from Python:
-
-```python
-from src.config import SimParams
-from src import stochastic_processes
-from src.simulator import simulation
-from src.market_makers import ConstantSpreadAgent, SymmetricAgent, ASModelAgent
-
-params = SimParams()
-
-processes = stochastic_processes.get_stochastic_processes(params)
-prices = processes["stock"]
-ask_orders = processes["asks"]
-bid_orders = processes["bids"]
-
-agents = {
-    "constant": ConstantSpreadAgent(bid_delta=1.0, ask_delta=1.0),
-    "symmetric": SymmetricAgent(),
-    "AS Inventory": ASModelAgent(),
-}
-
-for name, agent in agents.items():
-    result = simulation(params, prices, ask_orders, bid_orders, agent)
-    final_pnl = result["TotalValue"][-1] - params.money
-    final_inventory = result["q_stocks"][-1]
-    print(f"{name:20s} pnl={final_pnl:8.2f} inventory={final_inventory:5.1f}")
-```
-
-## Experiment Runner
-
-`run_experiment.py` is the main reproducible entry point. It currently:
-
-- defines a baseline `SimParams(T=1, m=200)`
-- compares `constant`, `symmetric`, and `AS Inventory` agents
-- runs a Monte Carlo experiment across repeated simulated market paths
-- saves a summary table to CSV
-- creates one example-path plot showing stock price, inventory, cash, and PnL
-- writes a compact PDF report with a styled result table and plot page
-
-The report is currently generated with Matplotlib's `PdfPages`, so no external
-PDF engine is required.
+``
 
 ## Model Components
 
