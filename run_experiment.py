@@ -1,3 +1,4 @@
+
 from src.config import SimParams
 from src import stochastic_processes
 from src.simulator import simulation
@@ -5,11 +6,10 @@ from src.market_makers import ConstantSpreadAgent, SymmetricAgent, ASModelAgent
 
 import pandas as pd
 
+import numpy as np
+
 
 from matplotlib.backends.backend_pdf import PdfPages
-
-import copy
-
 
 
 import matplotlib.pyplot as plt
@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 from IPython.display import display, HTML
 from tabulate import tabulate
-
+import argparse
 
 def run_experiments(N,agents,SP):
 
@@ -37,10 +37,21 @@ def run_experiments(N,agents,SP):
             rows.append({
                 'simulation_id': sim_id,
                 'agent': name,
-                'profit': sim['TotalValue'][-1]-1000 }
+                'profit': sim['TotalValue'][-1]-SP.money ,
+                'average_liquidity': sim['money'].mean(),
+                'deviation_liquidity': sim['money'].std()  }
             )
     df=pd.DataFrame(rows)
-    dg=df.groupby('agent', sort=False)['profit'].agg(["mean", "std", "min", "max"])
+    #print(df)
+    dg=df.groupby('agent', sort=False).agg(
+        mean_profit = ('profit',"mean"),
+        std_profit =  ('profit',"std"),
+        sharpe_profit = ('profit',lambda x: x.mean() / x.std()),
+        mean_liquidity = ('average_liquidity',"mean"),
+        std_liquidity = ('deviation_liquidity',"std")
+    )
+        #min= "min",
+        #max="max")
     dg=round(dg,2)
     return(dg)
 
@@ -71,7 +82,7 @@ def create_figure(params: SimParams,agents):
         axis[2].set_title('liquidity')
         axis[2].set_xlabel("time")
 
-        axis[3].plot(result['TotalValue']-1000, label=name)
+        axis[3].plot(result['TotalValue']-params.money, label=name)
         axis[3].set_title("revenue")
         axis[3].set_xlabel("time")
     handles, labels = axis[1].get_legend_handles_labels()
@@ -86,7 +97,7 @@ def create_figure(params: SimParams,agents):
 
     return fig, axis
 
-def make_dataframe_table_page(df, title="", max_rows=15):
+def make_dataframe_table_page(nsim,df, title="", max_rows=15):
     preview_df = df.head(max_rows).reset_index()
     preview_df.columns = [col.replace("_", " ").title() for col in preview_df.columns]
 
@@ -109,7 +120,7 @@ def make_dataframe_table_page(df, title="", max_rows=15):
     ax.text(
         0.5,
         0.875,
-        "Summary of 1000 Monte Carlo simulations",
+        "Summary of " + str(nsim) + " Monte Carlo simulations",
         ha="center",
         va="center",
         fontsize=11,
@@ -150,7 +161,23 @@ def make_dataframe_table_page(df, title="", max_rows=15):
                 cell.get_text().set_color("#17202a")
     return fig
 
+
+def parser():
+    parser = argparse.ArgumentParser(description="Input for experiments")
+    parser.add_argument('--seed', type = int, default = None, help ='Random seed for reproducibility')
+    parser.add_argument('--nsims', type = int, default = 1000, help ='Number of simulations')
+    return parser.parse_args()
+
+
 def main():
+    parse=parser()
+    #print(parse)
+    #print(parse.nsims)
+
+    if parse.seed is not None:
+        np.random.seed(parse.seed)
+
+
 
     params = SimParams(T=1,m=200)
 
@@ -163,7 +190,7 @@ def main():
     }
 
     '''we simulate 1000 branches'''
-    df_fair_experiment=run_experiments(100, agents,params)
+    df_fair_experiment=run_experiments(parse.nsims, agents,params)
     #print(tabulate(dg, headers="keys", tablefmt="github", showindex=True))
     #print(dg)
 
@@ -171,9 +198,9 @@ def main():
 
     df_fair_experiment.to_csv("experiment_results/fair_experiment.csv", index=True)
 
-    params_insider=copy.copy(params)
-    params_insider.market_condition = 'insider'
-    df_insider_experiment=run_experiments(100, agents,params_insider)
+    #params_insider=copy.copy(params)
+    #params_insider.market_condition = 'insider'
+    #df_insider_experiment=run_experiments(parse.nsims, agents,params_insider)
 
     #df_insider_experiment.to_csv("experiment_results/insider_experiment.csv", index=True)
 
@@ -192,7 +219,7 @@ def main():
 
 
     with PdfPages("report.pdf") as pdf:
-        pdf.savefig(make_dataframe_table_page(df_fair_experiment, title="Agent Performance in Fair Market"), bbox_inches="tight")
+        pdf.savefig(make_dataframe_table_page(parse.nsims,df_fair_experiment, title="Agent Performance in Fair Market"), bbox_inches="tight")
         pdf.savefig(fig, bbox_inches="tight")
         #pdf.savefig(make_dataframe_table_page(df_insider_experiment, title="Agent Performance in Market with Insider Trader"), bbox_inches="tight")
         #pdf.savefig(fig2, bbox_inches="tight")
