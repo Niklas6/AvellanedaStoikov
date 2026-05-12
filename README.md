@@ -29,7 +29,7 @@ This project simulates that idea by comparing three trading agents:
 
 ## Features
 
-- Stochastic mid-price simulation using a Brownian motion model.
+- Stochastic price simulation using a Brownian motion model.
 - Exponential order-arrival intensity based on quote distance from the mid-price.
 - Shared agent interface for comparing different quoting strategies.
 - Monte Carlo experiment runner with configurable number of simulations.
