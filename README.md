@@ -221,26 +221,9 @@ simulation_results.pdf
 - The project does not currently use historical market data.
 - Transaction costs, latency, queue position, and adverse selection are not yet
   modeled.
-- The experiment runner has only a small number of command-line options.
 - Automated tests are not yet included.
 - The experimental insider-market extension is not part of the main report.
 
-## Future Work
-
-Possible extensions include:
-
-- Add automated tests for the quote logic, simulator output shapes, and
-  accounting identities.
-- Add command-line options for output paths, market condition, volatility, risk
-  aversion, and order-arrival parameters.
-- Add inventory-risk metrics such as average absolute inventory, maximum
-  inventory, and terminal inventory distribution.
-- Add parameter sweeps for volatility, risk aversion, and fill-intensity
-  parameters.
-- Extend the PDF report with inventory-risk plots and strategy comparisons.
-- Compare the qualitative behavior of the simulation against the
-  Avellaneda-Stoikov paper.
-- Calibrate the model against real or historical limit order book data.
 
 ## Reference
 
